@@ -1,6 +1,7 @@
 package com.beelineshopping.beelineandroidapp;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
@@ -101,6 +102,15 @@ public class MainActivity extends AppCompatActivity {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+
+        //sendMessage(this.findViewById(android.R.id.content));
+    }
+
+    /** Called when the user clicks the List View button */
+    public void sendMessage(View view) {
+        // Do something in response to button
+        Intent intent = new Intent(this, ListActivity.class);
+        startActivity(intent);
     }
 
 //    private void preGetTest(){
