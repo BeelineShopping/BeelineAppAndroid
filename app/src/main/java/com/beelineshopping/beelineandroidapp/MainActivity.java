@@ -1,6 +1,7 @@
 package com.beelineshopping.beelineandroidapp;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -13,16 +14,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.beelineshopping.beelineandroidapp.tasks.GetRequestLoadTask;
-import com.beelineshopping.beelineandroidapp.myAsyncTask;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutionException;
-import com.beelineshopping.beelineandroidapp.FoodDbHelper;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
+    Context context;
+
     String testStr;
-    FoodDbHelper mDbHelper = new FoodDbHelper(this);
+    BeelineDbHelper mDbHelper = new BeelineDbHelper(this);
     DatabaseUtils dbUtils;
 
     @Override
@@ -41,30 +44,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        context = getApplicationContext();
+
         //Database code----------------------------------------------------------------------------
 // Gets the data repository in write mode
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
 // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
-        values.put(FoodContract.FoodDetails.COLUMN_NAME_ENTRY_ID, "1");
-        values.put(FoodContract.FoodDetails.COLUMN_NAME_TITLE, "Bread");
+        values.put(BeelineContract.StoreDetails.COLUMN_NAME_ENTRY_ID, "1");
+        values.put(BeelineContract.StoreDetails.COLUMN_NAME_CITY, "Redmond");
 
 // Insert the new row, returning the primary key value of the new row
         long newRowId;
         newRowId = db.insert(
-                FoodContract.FoodDetails.TABLE_NAME,
-                FoodContract.FoodDetails.COLUMN_NAME_NULLABLE,
+                BeelineContract.StoreDetails.TABLE_NAME,
+                BeelineContract.FoodDetails.COLUMN_NAME_NULLABLE,
                 values);
 
 
 
         db = mDbHelper.getReadableDatabase();
 
-// Pick the columns to which you will get data from
+// Read data
         String[] projection = {
-                FoodContract.FoodDetails._ID,
-                FoodContract.FoodDetails.COLUMN_NAME_TITLE
+                BeelineContract.StoreDetails._ID,
+                BeelineContract.StoreDetails.COLUMN_NAME_ENTRY_ID,
+                BeelineContract.StoreDetails.COLUMN_NAME_CITY
         };
 
 //// How you want the results sorted in the resulting Cursor
@@ -72,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 //                FoodContract.FoodDetails.COLUMN_NAME_UPDATED + " DESC";
 
         Cursor c = db.query(
-                FoodContract.FoodDetails.TABLE_NAME,  // The table to query
+                BeelineContract.FoodDetails.TABLE_NAME,  // The table to query
                 projection,                               // The columns to return
                 null,                                // The columns for the WHERE clause
                 null,                            // The values for the WHERE clause
@@ -86,20 +92,22 @@ public class MainActivity extends AppCompatActivity {
             String title = c.getString(c.getColumnIndex("title"));//show that data is accessible
             System.out.print("title");
         }
-        db.delete(FoodContract.FoodDetails.TABLE_NAME,null,null);//delete all data
+        db.delete(BeelineContract.FoodDetails.TABLE_NAME,null,null);//delete all data
         c.close();//prevent cursor leaks
         System.out.print("finish database");
         //---------------------------------------------------------------------------------------
 
 
         myAsyncTask task_my = new myAsyncTask();
-        task_my.execute("http://beeline-db.herokuapp.com/alive");
+        task_my.execute("http://beeline-db.herokuapp.com/api/v1/stores");
         try {
             String response = task_my.get();
-            String test = "this and that";
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+            if (!response.equals("ERROR")) {
+                JSONObject json = new JSONObject(response);
+                JSONArray data = json.getJSONArray("aisles");
+                System.out.print("something");
+            }
+        }  catch (InterruptedException | ExecutionException | JSONException e) {
             e.printStackTrace();
         }
 
@@ -109,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
     /** Called when the user clicks the List View button */
     public void sendMessage(View view) {
         // Do something in response to button
-        Intent intent = new Intent(this, ListActivity.class);
+        Intent intent = new Intent(this, ShoppingListActivity.class);
         startActivity(intent);
     }
 

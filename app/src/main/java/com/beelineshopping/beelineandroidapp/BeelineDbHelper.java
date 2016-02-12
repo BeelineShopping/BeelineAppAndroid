@@ -4,28 +4,26 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.beelineshopping.beelineandroidapp.FoodContract;
-
 /**
- * Created by Shelby on 1/27/2016.
+ * Created by Shelby on 2/12/2016.
  */
-public class FoodDbHelper extends SQLiteOpenHelper {
+public class BeelineDbHelper extends SQLiteOpenHelper {
     private static final String TEXT_TYPE = " TEXT";
     private static final String COMMA_SEP = ",";
     private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + FoodContract.FoodDetails.TABLE_NAME + " (" +
-                    FoodContract.FoodDetails._ID + " INTEGER PRIMARY KEY," +
-                    FoodContract.FoodDetails.COLUMN_NAME_ENTRY_ID + TEXT_TYPE + COMMA_SEP +
-                    FoodContract.FoodDetails.COLUMN_NAME_TITLE + TEXT_TYPE +
+            "CREATE TABLE " + BeelineContract.FoodDetails.TABLE_NAME + " (" +
+                    BeelineContract.FoodDetails._ID + " INTEGER PRIMARY KEY," +
+                    BeelineContract.FoodDetails.COLUMN_NAME_ENTRY_ID + TEXT_TYPE + COMMA_SEP +
+                    BeelineContract.FoodDetails.COLUMN_NAME_AISLE + TEXT_TYPE +
                     " )";
 
     private static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + FoodContract.FoodDetails.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + BeelineContract.FoodDetails.TABLE_NAME;
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "Food.db";
 
-    public FoodDbHelper(Context context) {
+    public BeelineDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
