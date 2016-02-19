@@ -17,36 +17,55 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Aisle 1"
-        android:id="@+id/textView"
+        android:id="@+id/title"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/button"
-        android:layout_alignEnd="@+id/button"
         android:textStyle="bold"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:layout_alignRight="@+id/sectionOne"
+        android:layout_alignEnd="@+id/sectionOne" />
 
-    <LinearLayout
+    <ListView
+        android:id="@+id/sectionOne"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/textView"
+        android:layout_height="250px"
+        android:layout_below="@+id/title"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/button"
-        android:layout_alignEnd="@+id/button"
-        android:layout_above="@+id/button"></LinearLayout>
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"></ListView>
+
+    <ListView
+        android:id="@+id/sectionTwo"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="250px"
+        android:layout_below="@+id/sectionOne"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"></ListView>
+
+    <ListView
+        android:id="@+id/sectionThree"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="250px"
+        android:layout_below="@+id/sectionTwo"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"></ListView>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Next Aisle"
-        android:id="@+id/button"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="127dp" />
-
-
+        android:id="@+id/nextButton"
+        android:layout_below="@+id/sectionThree"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>
