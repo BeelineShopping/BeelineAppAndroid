@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.SearchView;
 
-public class ShoppingListActivity extends AppCompatActivity {
+public class ItemSearch extends AppCompatActivity {
     public final static String EXTRA_MESSAGE = "com.beelineshopping.beelineandroidapp.MESSAGE";
     Context context;
 

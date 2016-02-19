@@ -3,11 +3,8 @@ package com.beelineshopping.beelineandroidapp;
 import android.app.*;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
-import android.widget.SearchView;
-import android.widget.Toast;
 
 import com.beelineshopping.beelineandroidapp.cursor_adapters.ShopCursorAdapter;
 
@@ -27,7 +24,7 @@ public class ResultActivity extends ListActivity {
         context = getApplicationContext();
 
         Intent intent = getIntent();
-        String search_info = intent.getStringExtra(ShoppingListActivity.EXTRA_MESSAGE);
+        String search_info = intent.getStringExtra(ItemSearch.EXTRA_MESSAGE);
         String check = "check";
 
 

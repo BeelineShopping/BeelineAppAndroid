@@ -24,4 +24,27 @@ public class BeelineContract {
         public static final String COLUMN_NAME_SECTION = "section";
         public static final String COLUMN_NAME_NULLABLE = null;
     }
+
+    public static abstract class ShoppingListDetails implements BaseColumns {
+        public static final String TABLE_NAME = "ShoppingList";
+        public static final String COLUMN_NAME_ENTRY_ID  = "entryid";
+        public static final String COLUMN_NAME_LIST_TITLE = "list_title";
+        public static final String COLUMN_NAME_NAME = "name";
+        public static final String COLUMN_NAME_SECTION = "section";
+        public static final String COLUMN_NAME_AISLE = "aisle";
+        public static final String COLUMN_NAME_STORE = "store";
+        public static final String COLUMN_NAME_NULLABLE = null;
+    }
+
+    public static abstract class UserDetails implements BaseColumns {
+        public static final String TABLE_NAME = "User";
+        public static final String COLUMN_NAME_USER_ID  = "user_id";
+        public static final String COLUMN_NAME_EMAIL = "email";
+        public static final String COLUMN_NAME_USERNAME = "username";
+        public static final String COLUMN_NAME_FIRST_NAME = "first_name";
+        public static final String COLUMN_NAME_LAST_NAME = "last_name";
+        public static final String COLUMN_NAME_CREATED_AT = "created_at";
+        public static final String COLUMN_NAME_UPDATED_AT = "updated_at";
+        public static final String COLUMN_NAME_NULLABLE = null;
+    }
 }
