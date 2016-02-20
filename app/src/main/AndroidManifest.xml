@@ -32,6 +32,10 @@
         </activity>
         <activity android:name=".UserLoginAcitivy" />
         <activity android:name=".ListCollectionActivity"></activity>
+        <activity
+            android:name=".Aisles"
+            android:label="@string/title_activity_aisles"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

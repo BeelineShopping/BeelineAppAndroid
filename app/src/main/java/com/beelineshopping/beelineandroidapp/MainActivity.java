@@ -1,6 +1,7 @@
 package com.beelineshopping.beelineandroidapp;
 
 import android.content.ContentValues;
+
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -33,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_main);
+
+        shopAisles();
 
         //Data loaded into DB
         boolean load = true;
@@ -220,6 +225,12 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void shopAisles() {
+        Intent intent = new Intent(MainActivity.this, Aisles.class);
+        startActivity(intent);
+    }
+
 
 
 
