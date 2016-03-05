@@ -9,8 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.beelineshopping.beelineandroidapp.Aisles"
-    tools:showIn="@layout/activity_aisles">
+    tools:context="com.beelineshopping.beelineandroidapp.Aisles">
 
     <TextView
         android:layout_width="wrap_content"
@@ -30,34 +29,42 @@
         android:id="@+id/sectionOne"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="250px"
+        android:layout_height="200px"
         android:layout_below="@+id/title"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"></ListView>
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:layout_alignParentEnd="true"
+        ></ListView>
 
     <ListView
         android:id="@+id/sectionTwo"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="250px"
+        android:layout_height="200px"
         android:layout_below="@+id/sectionOne"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"></ListView>
+        android:layout_alignParentEnd="true"
+        android:divider="@null"
+        android:dividerHeight="0dp"></ListView>
 
     <ListView
         android:id="@+id/sectionThree"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="250px"
+        android:layout_height="200px"
+        android:background="@drawable/whiteborder"
         android:layout_below="@+id/sectionTwo"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"></ListView>
+        android:layout_alignParentEnd="true"
+        android:divider="@null"
+        android:dividerHeight="0dp"></ListView>
 
     <Button
         android:layout_width="wrap_content"

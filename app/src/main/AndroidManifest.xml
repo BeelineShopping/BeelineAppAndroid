@@ -31,7 +31,8 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".UserLoginAcitivy" />
-        <activity android:name=".ListCollectionActivity"></activity>
+        <activity android:name=".ListCollectionActivity"
+                android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".Aisles"
             android:label="@string/title_activity_aisles"

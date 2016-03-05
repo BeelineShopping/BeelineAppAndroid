@@ -1,9 +1,11 @@
 package com.beelineshopping.beelineandroidapp;
 
-import android.graphics.Color;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -11,12 +13,17 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.database.DatabaseUtils;
+import android.widget.Toast;
 
 import com.beelineshopping.beelineandroidapp.tasks.Ingredient;
 
 import java.util.ArrayList;
 
 public class Aisles extends AppCompatActivity {
+
+    // Holds the name of the current list
+    private String listName;
 
     // Hold all the ingredient objects
     private ArrayList<Ingredient> ingredients;
@@ -48,14 +55,17 @@ public class Aisles extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_aisles);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setContentView(R.layout.content_aisles);
 
         ingredients = new ArrayList<Ingredient>();
+
+        // Hold the name of the current shopping list. Passed from the parent Activity
+        listName = getIntent().getStringExtra("listName");
+
         fillList();
 
-         aisleOrder = new String[] {"Aisle 1", "Aisle 2", "Aisle 3"};
+         //aisleOrder = new String[] {"Aisle 1", "Aisle 2", "Aisle 3"};
+        aisleOrder = new String[] {"right", "left", "back", "9", "5"};
 
         sectionOneListView = (ListView)findViewById(R.id.sectionOne);
         sectionTwoListView = (ListView)findViewById(R.id.sectionTwo);
@@ -65,7 +75,6 @@ public class Aisles extends AppCompatActivity {
 
         // Initial setting up of aisle items
         updateAisleItems();
-
 
         View.OnClickListener nextAisleListener = new View.OnClickListener() {
             @Override
@@ -96,30 +105,23 @@ public class Aisles extends AppCompatActivity {
         final Button nextButton = (Button) findViewById(R.id.nextButton);
 
         nextButton.setOnClickListener(nextAisleListener);
-
-
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 
     public void fillList()
     {
-        ingredients.add(new Ingredient("Milk", "Aisle 1", "Section 1"));
-        ingredients.add(new Ingredient("Eggs",  "Aisle 1", "Section 2"));
-        ingredients.add(new Ingredient("Cheese", "Aisle 1", "Section 3"));
-        ingredients.add(new Ingredient("Celery", "Aisle 2", "Section 1"));
-        ingredients.add(new Ingredient("Tomato", "Aisle 2", "Section 1"));
-        ingredients.add(new Ingredient("Peanuts", "Aisle 3", "Section 1"));
-        ingredients.add(new Ingredient("Chips", "Aisle 3", "Section 1"));
-        ingredients.add(new Ingredient("Potatoes", "Aisle 3", "Section 3"));
-        ingredients.add(new Ingredient("Salt", "Aisle 3", "Section 3"));
+        BeelineDbHelper mDbHelper = new BeelineDbHelper(this);
+
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        String query = "SELECT name, section, aisle FROM ShoppingList WHERE list_title = '" + listName + "'";
+
+        Cursor c = db.rawQuery(query, null);
+
+        while (c.moveToNext())
+        {
+            ingredients.add(new Ingredient(c.getString(0), c.getString(2), c.getString(1)));
+        }
+        c.close();
     }
 
     public void updateAisleItems()
@@ -130,15 +132,18 @@ public class Aisles extends AppCompatActivity {
 
         for (int i = 0; i < ingredients.size(); i++)
         {   // Check the aisle
-            if (ingredients.get(i).getAisle() == aisleOrder[currentAisleIndex]) {
+           // Toast.makeText(this, ingredients.get(i).getAisle() + " " + aisleOrder[currentAisleIndex], Toast.LENGTH_LONG).show();
+            if (ingredients.get(i).getAisle().equals(aisleOrder[currentAisleIndex])) {
+               // Toast.makeText(this, "Matching Aisle!", Toast.LENGTH_LONG).show();
+               // Toast.makeText(this, ingredients.get(i).getSection(), Toast.LENGTH_LONG).show();
                 //Check the section
-                if (ingredients.get(i).getSection() == "Section 1") {
+                if (ingredients.get(i).getSection().equals("1")) {
                     sectionOneItems.add(ingredients.get(i).getName());
                 }
-                else if (ingredients.get(i).getSection() == "Section 2") {
+                else if (ingredients.get(i).getSection().equals("2")) {
                     sectionTwoItems.add(ingredients.get(i).getName());
                 }
-                else if (ingredients.get(i).getSection() == "Section 3") {
+                else if (ingredients.get(i).getSection().equals("3")) {
                     sectionThreeItems.add(ingredients.get(i).getName());
                 }
             }
@@ -156,19 +161,19 @@ public class Aisles extends AppCompatActivity {
 
         // Make ListViews grey if a section has no items
         if (sectionOneItems.size() == 0)
-            sectionOneListView.setBackgroundColor(Color.parseColor("#EDEDED"));
+            sectionOneListView.setBackground(ContextCompat.getDrawable(this, R.drawable.greyborder));
         else
-            sectionOneListView.setBackgroundColor(Color.WHITE);
+            sectionOneListView.setBackground(ContextCompat.getDrawable(this, R.drawable.whiteborder));
 
         if (sectionTwoItems.size() == 0)
-            sectionTwoListView.setBackgroundColor(Color.parseColor("#EDEDED"));
+            sectionTwoListView.setBackground(ContextCompat.getDrawable(this, R.drawable.greyborder));
         else
-            sectionTwoListView.setBackgroundColor(Color.WHITE);
+            sectionTwoListView.setBackground(ContextCompat.getDrawable(this, R.drawable.whiteborder));
 
         if (sectionThreeItems.size() == 0)
-            sectionThreeListView.setBackgroundColor(Color.parseColor("#EDEDED"));
+            sectionThreeListView.setBackground(ContextCompat.getDrawable(this, R.drawable.greyborder));
         else
-            sectionThreeListView.setBackgroundColor(Color.WHITE);
+            sectionThreeListView.setBackground(ContextCompat.getDrawable(this, R.drawable.whiteborder));
 
             // Update the text at the top of the screen
         title = (TextView) findViewById(R.id.title);
