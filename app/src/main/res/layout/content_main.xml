@@ -33,4 +33,5 @@
         android:id="@+id/search_view"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
