@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,9 +16,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.beelineshopping.beelineandroidapp.tasks.GetRequestTask;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 import org.json.JSONArray;
@@ -39,31 +45,33 @@ public class MainActivity extends AppCompatActivity {
 
         context = getApplicationContext();
 
-        HttpHandler.setCredentials("test@example.com", "password");
+        //HttpHandler.setCredentials("test@example.com", "password");
 
-        //Load data from endpoints ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        if (isNetworkAvailable()) {
 
-        //Load Lists =====================================================================
-        //http requests
-        GetRequestTask listTask = new GetRequestTask();
-        listTask.execute("https://beeline-db.herokuapp.com/api/v1/lists");
-        //DB setup
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        long newRowId;
-        String name;
-        String section;
-        String aisle;
-        String store;
-        //===================================================
-        //handle/format json response body
-        String list_title;
-        JSONObject list_titleObj;
-        try {
-            String response = listTask.get();
-            if (response.equals("ERROR")) {
-                load = false;
-            }
+            //Load data from endpoints ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+            //Load Lists =====================================================================
+            //http requests
+            GetRequestTask listTask = new GetRequestTask();
+            listTask.execute("https://beeline-db.herokuapp.com/api/v1/lists");
+            //DB setup
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            long newRowId;
+            String name;
+            String section;
+            String aisle;
+            String store;
+            //===================================================
+            //handle/format json response body
+            String list_title;
+            JSONObject list_titleObj;
+            try {
+                String response = listTask.get();
+                if (response.equals("ERROR")) {
+                    load = false;
+                }
                 //User is logged in, start loading data----------------------------------
                 //empty tables.
                 db.delete(BeelineContract.ShoppingListDetails.TABLE_NAME, null, null);
@@ -72,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject json = new JSONObject(response);
                 JSONArray shopping_lists = json.getJSONArray("shopping_lists");
                 int shopSize = shopping_lists.length();
-                for(int i = 0; i < shopSize; i++) {
+                for (int i = 0; i < shopSize; i++) {
                     list_titleObj = shopping_lists.getJSONObject(i);
                     list_title = list_titleObj.getString("list_title");
 
@@ -134,62 +142,81 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-        } catch (InterruptedException | ExecutionException | JSONException e) {
-            e.printStackTrace();
-        }
-
-        //Load user data=====================================================
-        //http request
-        GetRequestTask userTask = new GetRequestTask();
-        userTask.execute("https://beeline-db.herokuapp.com/api/v1/user");
-        try {
-            String response = userTask.get();
-            if (response.equals("ERROR")) {
-                load = false;
+            } catch (InterruptedException | ExecutionException | JSONException e) {
+                e.printStackTrace();
             }
-            //format data from http response
-            JSONObject userObj = new JSONObject(response);
-            String user_id = userObj.getString("id");
-            String email = userObj.getString("email");
-            String username = userObj.getString("username");
-            String first_name = userObj.getString("first_name");
-            String last_name = userObj.getString("last_name");
-            String created_at = userObj.getString("created_at");
-            String updated_at = userObj.getString("updated_at");
 
-            //insert data into DB
-            db = mDbHelper.getWritableDatabase();
-            ContentValues user_values = new ContentValues();
-            user_values.put(BeelineContract.UserDetails.COLUMN_NAME_USER_ID, user_id);
-            user_values.put(BeelineContract.UserDetails.COLUMN_NAME_EMAIL, email);
-            user_values.put(BeelineContract.UserDetails.COLUMN_NAME_USERNAME, username);
-            user_values.put(BeelineContract.UserDetails.COLUMN_NAME_FIRST_NAME, first_name);
-            user_values.put(BeelineContract.UserDetails.COLUMN_NAME_LAST_NAME, last_name);
-            user_values.put(BeelineContract.UserDetails.COLUMN_NAME_CREATED_AT, created_at);
-            user_values.put(BeelineContract.UserDetails.COLUMN_NAME_UPDATED_AT, updated_at);
+            //Load user data=====================================================
+            //http request
+            GetRequestTask userTask = new GetRequestTask();
+            userTask.execute("https://beeline-db.herokuapp.com/api/v1/user");
+            try {
+                String response = userTask.get();
+                if (response.equals("ERROR")) {
+                    load = false;
+                }
+                //format data from http response
+                JSONObject userObj = new JSONObject(response);
+                String user_id = userObj.getString("id");
+                String email = userObj.getString("email");
+                String username = userObj.getString("username");
+                String first_name = userObj.getString("first_name");
+                String last_name = userObj.getString("last_name");
+                String created_at = userObj.getString("created_at");
+                String updated_at = userObj.getString("updated_at");
 
-            db.insert(
-                    BeelineContract.UserDetails.TABLE_NAME,
-                    BeelineContract.UserDetails.COLUMN_NAME_NULLABLE,
-                    user_values);
+                //insert data into DB
+                db = mDbHelper.getWritableDatabase();
+                ContentValues user_values = new ContentValues();
+                user_values.put(BeelineContract.UserDetails.COLUMN_NAME_USER_ID, user_id);
+                user_values.put(BeelineContract.UserDetails.COLUMN_NAME_EMAIL, email);
+                user_values.put(BeelineContract.UserDetails.COLUMN_NAME_USERNAME, username);
+                user_values.put(BeelineContract.UserDetails.COLUMN_NAME_FIRST_NAME, first_name);
+                user_values.put(BeelineContract.UserDetails.COLUMN_NAME_LAST_NAME, last_name);
+                user_values.put(BeelineContract.UserDetails.COLUMN_NAME_CREATED_AT, created_at);
+                user_values.put(BeelineContract.UserDetails.COLUMN_NAME_UPDATED_AT, updated_at);
 
-        }catch (InterruptedException | ExecutionException | JSONException e){
-            e.printStackTrace();
+                db.insert(
+                        BeelineContract.UserDetails.TABLE_NAME,
+                        BeelineContract.UserDetails.COLUMN_NAME_NULLABLE,
+                        user_values);
+
+            } catch (InterruptedException | ExecutionException | JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            if (load) {
+                //Data loaded send user to ListCollectionActivity.
+                System.out.println("App data has been loaded, sending user to ListCollectionActivity");
+                Intent intent = new Intent(getApplicationContext(), ListCollectionActivity.class);
+                startActivity(intent);
+                finish();
+            } else {
+                //Data not loaded send user to login activity
+                System.out.println("User Not Logged in, redirect to UserLoginActivity");
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+            //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        }else{
+            Toast toast = Toast.makeText(context,
+                    "No internet connection", Toast.LENGTH_LONG);
+            toast.show();
+            Intent ni = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(ni);
         }
+    }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager cm =
+                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        if(load){
-            //Data loaded send user to ListCollectionActivity.
-            System.out.println("App data has been loaded, sendinguser to ListCollectionActivity");
-            Intent intent = new Intent(getApplicationContext(), ListCollectionActivity.class);
-            startActivity(intent);
-        }else {
-            //Data not loaded send user to login activity
-            System.out.println("User Not Logged in, redirect to UserLoginActivity");
-            Intent intent = new Intent(getApplicationContext(), UserLoginAcitivy.class);
-            startActivity(intent);
-        }
-        //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        return isConnected;
     }
 
     /** Called when the user clicks the List View button */
