@@ -64,8 +64,8 @@ public class Aisles extends AppCompatActivity {
 
         fillList();
 
-         //aisleOrder = new String[] {"Aisle 1", "Aisle 2", "Aisle 3"};
-        aisleOrder = new String[] {"right", "left", "back", "9", "5"};
+        //aisleOrder = new String[] {"Aisle 1", "Aisle 2", "Aisle 3"};
+        aisleOrder = new String[] {"left", "back", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16","17", "right"};
 
         sectionOneListView = (ListView)findViewById(R.id.sectionOne);
         sectionTwoListView = (ListView)findViewById(R.id.sectionTwo);
@@ -74,7 +74,13 @@ public class Aisles extends AppCompatActivity {
         currentAisleIndex = 0;
 
         // Initial setting up of aisle items
-        updateAisleItems();
+        int itemsNotFound = updateAisleItems();
+        // If we are at the second to last aisle then only run one more time to get us to the last aisle
+        while (itemsNotFound == 1 && currentAisleIndex < aisleOrder.length - 1)
+        {
+            currentAisleIndex++;
+            itemsNotFound = updateAisleItems();
+        }
 
         View.OnClickListener nextAisleListener = new View.OnClickListener() {
             @Override
@@ -83,13 +89,6 @@ public class Aisles extends AppCompatActivity {
 
                 currentAisleIndex++;
 
-                // If we have reached the last aisle
-                if (currentAisleIndex >= aisleOrder.length - 1)
-                {
-                    nextButton = (Button) findViewById(R.id.nextButton);
-                    nextButton.setText("Done");
-                }
-
                 // If there are no more aisles go back to the parent activity
                 if (currentAisleIndex >= aisleOrder.length)
                 {
@@ -97,7 +96,20 @@ public class Aisles extends AppCompatActivity {
                 }
                 else
                 {
-                    updateAisleItems();
+                    int itemsNotFound = updateAisleItems();
+                    // If we are at the second to last aisle then only run one more time to get us to the last aisle
+                    while (itemsNotFound == 1 && currentAisleIndex < aisleOrder.length - 1)
+                    {
+                        currentAisleIndex++;
+                        itemsNotFound = updateAisleItems();
+
+                        // If we have reached the last aisle
+                        if (currentAisleIndex >= aisleOrder.length - 1)
+                        {
+                            nextButton = (Button) findViewById(R.id.nextButton);
+                            nextButton.setText("Done");
+                        }
+                    }
                 }
             }
         };
@@ -124,7 +136,7 @@ public class Aisles extends AppCompatActivity {
         c.close();
     }
 
-    public void updateAisleItems()
+    public int updateAisleItems()
     {
         sectionOneItems = new ArrayList<String>();
         sectionTwoItems = new ArrayList<String>();
@@ -132,10 +144,10 @@ public class Aisles extends AppCompatActivity {
 
         for (int i = 0; i < ingredients.size(); i++)
         {   // Check the aisle
-           // Toast.makeText(this, ingredients.get(i).getAisle() + " " + aisleOrder[currentAisleIndex], Toast.LENGTH_LONG).show();
+            // Toast.makeText(this, ingredients.get(i).getAisle() + " " + aisleOrder[currentAisleIndex], Toast.LENGTH_LONG).show();
             if (ingredients.get(i).getAisle().equals(aisleOrder[currentAisleIndex])) {
-               // Toast.makeText(this, "Matching Aisle!", Toast.LENGTH_LONG).show();
-               // Toast.makeText(this, ingredients.get(i).getSection(), Toast.LENGTH_LONG).show();
+                // Toast.makeText(this, "Matching Aisle!", Toast.LENGTH_LONG).show();
+                // Toast.makeText(this, ingredients.get(i).getSection(), Toast.LENGTH_LONG).show();
                 //Check the section
                 if (ingredients.get(i).getSection().equals("1")) {
                     sectionOneItems.add(ingredients.get(i).getName());
@@ -175,11 +187,23 @@ public class Aisles extends AppCompatActivity {
         else
             sectionThreeListView.setBackground(ContextCompat.getDrawable(this, R.drawable.whiteborder));
 
-            // Update the text at the top of the screen
+        // Update the text at the top of the screen
         title = (TextView) findViewById(R.id.title);
 
         // Set the text to the next Aisle
-        title.setText(aisleOrder[currentAisleIndex]);
+        if (aisleOrder[currentAisleIndex].equals("left") || aisleOrder[currentAisleIndex].equals("right") || aisleOrder[currentAisleIndex].equals("back"))
+        {
+            title.setText(aisleOrder[currentAisleIndex].substring(0, 1).toUpperCase() + aisleOrder[currentAisleIndex].substring(1) + " Aisle");
+        }
+        else
+            title.setText("Aisle " + aisleOrder[currentAisleIndex]);
+
+        if (sectionOneItems.size() == 0 && sectionTwoItems.size() == 0  && sectionThreeItems.size() == 0)
+        {
+            return 1;
+        }
+        else
+            return 0;
     }
 
 }
